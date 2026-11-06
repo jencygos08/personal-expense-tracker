@@ -26,3 +26,28 @@ def setup_database():
 @app.route("/")
 def dashboard():
     return render_template("index.html")
+
+@app.get("/api/summary")
+def summary():
+    month = date.today().strftime("%Y-%m")
+
+total = conn.execute(
+    "SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE substr(expense_date, 1, 7) = ?",
+    (month,)
+).fetchone()[0]
+
+count = conn.execute(
+    "SELECT COUNT(*) FROM expenses WHERE substr(expense_date, 1, 7) = ?",
+    (month,)
+).fetchone()[0]
+
+categories = con.execute(
+    """SELECT category, SUM(amount) AS total
+    FROM expenses
+    WHERE substr(expense_date, 1, 7) = ?
+    GROUP BY category ORDER BY total DESC""",
+    (month,)
+).fetchall()
+recent = conn.execute(
+    "SELECT * FROM expenses ORDER BY expense_date DESC, id DESC LIMIT 6"
+).fetchall()
