@@ -31,23 +31,59 @@ def dashboard():
 def summary():
     month = date.today().strftime("%Y-%m")
 
-total = conn.execute(
-    "SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE substr(expense_date, 1, 7) = ?",
-    (month,)
-).fetchone()[0]
+    with get_db() as conn:
+        total = conn.execute(
+            "SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE substr(expense_date, 1, 7) = ?",
+            (month,)
+        ).fetchone()[0]
 
-count = conn.execute(
-    "SELECT COUNT(*) FROM expenses WHERE substr(expense_date, 1, 7) = ?",
-    (month,)
-).fetchone()[0]
+        count = conn.execute(
+            "SELECT COUNT(*) FROM expenses WHERE substr(expense_date, 1, 7) = ?",
+            (month,)
+        ).fetchone()[0]
 
-categories = con.execute(
-    """SELECT category, SUM(amount) AS total
-    FROM expenses
-    WHERE substr(expense_date, 1, 7) = ?
-    GROUP BY category ORDER BY total DESC""",
-    (month,)
-).fetchall()
-recent = conn.execute(
-    "SELECT * FROM expenses ORDER BY expense_date DESC, id DESC LIMIT 6"
-).fetchall()
+        categories = con.execute(
+            """SELECT category, SUM(amount) AS total
+                FROM expenses
+                WHERE substr(expense_date, 1, 7) = ?
+                GROUP BY category ORDER BY total DESC""",
+            (month,)
+        ).fetchall()
+        recent = conn.execute(
+            "SELECT * FROM expenses ORDER BY expense_date DESC, id DESC LIMIT 6"
+        ).fetchall()
+
+    budget = 20000
+    return jsonify({
+        "spent": round(total, 2),
+        "count": count,
+        "budget": budget,
+        "remaining": round(max(budget - total, 0), 2),
+        "categories": [dict(row) for row in categories],
+        "recent": [dict(row) for row in recent]
+})
+
+@app.post("/api/expenses")
+def add_expense():
+    data = request.get_json()
+    title = (data.get("title") or "").strip()
+    category = (data.get("category") or "").strip()
+    amount = data.get("amount")
+    expense_date = data.get("date") or date.today().isoformat()
+
+    if not title or not category or amount is None:
+        return jsonify({"error": "Please fill in every field"}),400
+
+    try:
+        amount = float(amount)
+        if amount<= 0:
+            raise ValueError
+    except (TypeError, ValueError):
+        return jsonify({"error": "Enter an amount greater than zero"}), 400
+
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO expenses (title, category, amount, expense_date) VALUES (?,?,?,?)",
+            (title, category, amount, expense_date)
+        )
+    return jsonify({"message": "Expense added successfully"}), 201
