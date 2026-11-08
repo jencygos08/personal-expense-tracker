@@ -87,3 +87,14 @@ def add_expense():
             (title, category, amount, expense_date)
         )
     return jsonify({"message": "Expense added successfully"}), 201
+
+@app.delete("/api/expenses/<int:expense_id>")
+def delete_expense(expense_id):
+    with get_db() as conn:
+        conn.execute("DELETE FROM expennses WHERE id = ?", (expense_id,))
+    return jsonify({"message": "Expense deleted successfully"})
+
+if __name__ == "__main__":
+    setup_database()
+    app.run(debug=True)
+    
