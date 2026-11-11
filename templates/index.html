@@ -3,20 +3,20 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewpoint" conntet="width=device-width, initial-scale=1.0>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Personal Finance Dashboard</title>
 
 <!-- Google Fonts: Inter -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel=""preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
     rel="stylesheet">
 
 <!-- CSS file -->>
  <link rel="stylesheet"
-    href="{{ url_for('static', filename='style.css'0 }}">
+    href="{{ url_for('static', filename='style.css') }}">
 
 <!-- chart.js library-->>
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -67,3 +67,101 @@
 
 </header>
 
+<!-- WELCOME MESSAGE -->
+ <section class="welcome-row">
+
+    <div>
+
+        <p class="eyebrow">
+            Your Money, In Your Control
+        </p>
+        
+        <h1>
+            Good Morning<span class="hello-dot">.</span>
+        </h1>
+
+        <p class="subheading">
+            Here's what's happening with your money this month
+        </p>
+    
+    </div>
+
+    <button class="primary-button" id="open-model">
+        <span>+</span> Add expense
+    </button>
+
+</section>
+
+<!-- STATISTICS CARDS-->
+ <section class="stats-grid" aria-label="Monthly Overview">
+
+<!-- CARD 1: MONTHLY BUDGET-->
+ <article class="stat-card glass">
+
+    <div class="stat-top">
+
+        <span class="stat-icon lavender">
+            ◈
+        </span>
+
+        <span class="more">
+            ...
+        </span>
+
+    </div>
+
+    <p class="stat-label">
+        Monthly Budget
+    </p>
+
+    <h2 id="budget-value">
+        ₹20,000
+    </h2>
+
+    <p class="stat-foot">
+        Your Planned Spending for the Month
+    </p>
+ </article>
+ 
+ <!-- CARD 2: TOTAL SPENT-->
+<article class="start-card glass">
+
+    <div class="stat-top">
+
+        <span class="stat-icon pink">
+            ↗
+        </span>
+
+        <span class="trend">
+            This Month
+        </span>
+
+    </div>
+
+    <p class="stat-label">
+        Total Spent
+    </p>
+
+    <h2 id="spent-value">
+        ₹0
+    </h2>
+
+    <p class="stat-foot">
+        Across all categories
+    </p>
+</article>
+
+<!-- CARD 3: TRANSACTION-->
+ <article class="stat-card glass">
+
+    <div class="stat-top">
+
+        <span class="stat-icon peach">
+            ▤
+        </span>
+
+        <span class="more">
+            ...
+        </span>
+    </div>
+ </article>
